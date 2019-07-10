@@ -1,21 +1,21 @@
 {
 	"common": {
-		"name": "hid-barcode",
+		"name": "Benutzeranmeldung",
 		"version": "0.0.1",
 		"news": {
 			"0.0.1": {
 				"de": "Erstveröffentlichung"
 			}
 		},
-		"title": "Hid-Barcode",
+		"title": "Benutzeranmeldung",
 		"titleLang": {
-			"de": "usbstream"
+			"de": "Benutzeranmeldung"
 		},
 		"desc": {
-			"de": "usbstream"
+			"de": "Benutzeranmeldung"
 		},
 		"authors": [
-			"fluen <luennemann74@gmail.com>"
+			"fluen"
 		],
 		"keywords": [
 			"rfid"
@@ -25,8 +25,8 @@
 		"main": "main.js",
 		"icon": "hid.png",
 		"enabled": true,
-		"extIcon": "https://raw.githubusercontent.com/David20103/iobroker.hid-barcode/master/admin/hid.png",
-		"readme": "https://github.com/David20103/ioBroker.hid-barcode/blob/master/README.md",
+		"extIcon": "https://raw.githubusercontent.com/modpls/iobroker.benutzeranmeldung/master/admin/hid.png",
+		"readme": "https://github.com//iobroker.benutzeranmeldung/blob/master/README.md",
 		"loglevel": "info",
 		"mode": "daemon",
 		"type": "logic",

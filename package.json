@@ -1,18 +1,18 @@
 {
-  "name": "iobroker.hid-barcode",
+  "name": "iobroker.benutzeranmeldung",
   "version": "0.0.1",
-  "description": "HID Adapter",
+  "description": "Benutzeranmeldung",
   "author": {
     "name": "luen",
-    "email": "luennemann74@gmail.com"
+    "email": "prozessleitsystem@gmail.com"
   },
   "contributors": [
     {
       "name": "fluen",
-      "email": "luennemann74@gmail.com"
+      "email": "prozessleitsystem@gmail.com"
     }
   ],
-  "homepage": "https://github.com/david20103/iobroker.hid-barcode",
+  "homepage": "https://github.com/modpls/iobroker.benutzeranmeldung",
   "license": "MIT",
   "keywords": [
     "ioBroker",
@@ -21,7 +21,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/David20103/iobroker.hid-barcode"
+    "url": "https://github.com/modpls/iobroker.benutzeranmeldung"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^1.0.3",
@@ -43,7 +43,7 @@
     "chai": "^4.1.2"
   },
   "bugs": {
-    "url": "https://github.com/David20103/iobroker.hid-barcode/issues"
+    "url": "https://github.com/modpls/iobroker.benutzeranmeldung/issues"
   },
   "readmeFilename": "README.md",
   "main": "main.js",
