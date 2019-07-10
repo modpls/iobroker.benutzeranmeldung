@@ -31,6 +31,7 @@
     "os": "^0.1.1",
     "rimraf": "^2.4.3",
     "soef": "^0.1.4",
+    "tools": "0.0.0",
     "usb-barcode-scanner": "^1.0.2"
   },
   "devDependencies": {

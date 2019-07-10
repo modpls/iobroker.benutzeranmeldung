@@ -2,21 +2,21 @@
 
 var utils = require('@iobroker/adapter-core');
 var adapterName = require(__dirname + '/package.json').name.split('.').pop();
-var adapterName = 'hid-barcode';
+var adapterName = 'benutzeranmeldung';
 var os = require('os');
 var adapter = new utils.Adapter(adapterName);
 const Hostname = JSON.stringify(os.hostname());
-//adapter.log.info (Hostname)
+var finished = null;
 var BS = require('usb-barcode-scanner').UsbScanner;
 var scanner = null;
 
-var id_Anlage = "2600_Schrauberstand";
+var id_Anlage = Hostname
 var angemeldet = "Angemeldet";
 var abgemeldet = "Abgemeldet";
 var RFID;
 
 
-const sql = require('mssql')
+var sql = require('mssql')
 const config = {
     user: 'sa',
     password: '',
@@ -84,16 +84,64 @@ adapter.setObjectNotExists("RFID_Status", {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 adapter.on('ready', function(){
-adapter.log.info(Hostname)
+adapter.log.debug(Hostname)
 main();
 });
 
-adapter.on('unload', function(){
-scanner.stopScanning();
-scanner = null
+
+adapter.on('unload', function (callback) {
+    finish(callback);
 });
 
+process.on('SIGINT', function () {
+    // close connection to DB
+    finish();
+});
+
+
+
+
+
+
+
+
 //###########################################   Main Funktion   ############################################################################
+
+function finish(callback) {
+
+adapter.setState("RFID","", true);
+adapter.setState("RFID_Name","",true);
+adapter.setState("RFID_Level",0, true);
+adapter.setState("RFID_Status","Abgemeldet", true);
+
+try{
+sql.close();
+scanner.stopScanning();
+sql = null;
+scanner = null;
+   } catch(e) {
+        adapter.log.debug(e.message);
+        return;
+}
+
+    adapter.unsubscribeForeignStates('*');
+    var count = 0;
+    if (finished) {
+        if (callback) {
+            if (finished === true) {
+                callback();
+            } else {
+                finished.push(callback);
+            }
+        }
+        return;
+    }
+    finished = [callback];
+}
+
+
+
+
 function main() {
 
   if (!adapter.config.vendorID || !adapter.config.productID) {
@@ -102,8 +150,6 @@ function main() {
     }
 
     try {
-	adapter.log.info (adapter.config.vendorID + "    " +  adapter.config.productID)
-
       scanner = new BS({vendorId: Number(adapter.config.vendorID), productId: Number(adapter.config.productID) });
 
     } catch(e) {
@@ -120,9 +166,8 @@ scanner.on("data", function(data) {
 	adapter.setState("RFID", decimalToHex(data), true); 
 	RFID = decimalToHex(data)
 	NNRFID();
-
-	//SQLAbfrage();
 });
+
 
 scanner.on('error', function(err){
 adapter.log.error(err)
@@ -157,8 +202,8 @@ function decimalToHex(d, padding) {
 
 function NNRFID (){
 //Daten vom SQL server lesen
-adapter.log.info(RFID)
-var ssql = 'exec [Anlagen_Produktdaten].[dbo].[Allgemein_Benutzerverwaltung_ioBroker] @SN_Nr = "' + RFID + '", @Anlage = "2600_Schrauberstand"'
+adapter.log.debug(RFID)
+var ssql = 'exec [Anlagen_Produktdaten].[dbo].[Allgemein_Benutzerverwaltung_ioBroker] @SN_Nr = "' + RFID + '", @Anlage = "' + id_Anlage + '"'
 sql.connect(config).then(() => {
     return sql.query (ssql)
 }).then(result => {
@@ -166,23 +211,23 @@ sql.connect(config).then(() => {
 		adapter.setState("RFID",JSON.stringify(result.recordsets[0][0].SN_Nr), true);
                 adapter.setState("RFID_Name",JSON.stringify(result.recordsets[0][0].Benutzername),true);
                 adapter.setState("RFID_Level",JSON.stringify(result.recordsets[0][0].Anlage), true);
-		adapter.log.info("Level:  " + JSON.stringify(result.recordsets[0][0].Anlage))
+		adapter.log.debug("Level:  " + JSON.stringify(result.recordsets[0][0].Anlage))
 //Level größer 0 dann anmelden setzen
                 if (Number(JSON.stringify(result.recordsets[0][0].Anlage)) > 0)  {
-                    adapter.log.info('Angemeldet');
+                    adapter.log.debug('Angemeldet');
                     adapter.setState("RFID_Status",angemeldet);
                     Anmeldedaten("Angemeldet");
 		    sql.close();
 //Level =0 dann Benutzer abmelden
                 }else {
-                    adapter.log.info('Abgemeldet');
+                    adapter.log.debug('Abgemeldet');
                     Anmeldedaten("Angemeldet");
 		    sql.close(); 
 }
                 }
                 catch(err){
-			adapter.log.error(err)
-                    adapter.log.info('Abgemeldet');
+			adapter.log.error(err + "   SN_Nr: " + RFID)
+                    adapter.log.debug('Abgemeldet');
                     Anmeldedaten("Abgemeldet");
 		    sql.close();
                 }}
@@ -195,7 +240,6 @@ sql.connect(config).then(() => {
 function Anmeldedaten(s) {
 var a = s.toString();
 var delayMillis = 1000; //1 second
-adapter.log.info("Funktion:  " + a)
 setTimeout(function() {
 	setTimeout(function() {
     		adapter.setState("RFID","0");
