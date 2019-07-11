@@ -14,7 +14,8 @@ var id_Anlage = Hostname
 var angemeldet = "Angemeldet";
 var abgemeldet = "Abgemeldet";
 var RFID;
-
+var result = null;
+var callback = null
 
 var sql = require('mssql')
 const config = {
@@ -93,8 +94,11 @@ adapter.on('unload', function (callback) {
     finish(callback);
 });
 
+adapter.on('error', function (callback) {
+    finish(callback);
+});
+
 process.on('SIGINT', function () {
-    // close connection to DB
     finish();
 });
 
@@ -119,6 +123,7 @@ sql.close();
 scanner.stopScanning();
 sql = null;
 scanner = null;
+BS = null;
    } catch(e) {
         adapter.log.debug(e.message);
         return;
@@ -137,6 +142,7 @@ scanner = null;
         return;
     }
     finished = [callback];
+adapter.log.info("Benutzeranmeldung beendet");
 }
 
 
@@ -203,10 +209,13 @@ function decimalToHex(d, padding) {
 function NNRFID (){
 //Daten vom SQL server lesen
 adapter.log.debug(RFID)
-var ssql = 'exec [Anlagen_Produktdaten].[dbo].[Allgemein_Benutzerverwaltung_ioBroker] @SN_Nr = "' + RFID + '", @Anlage = "' + id_Anlage + '"'
+//var ssql = 'exec [Anlagen_Produktdaten].[dbo].[Allgemein_Benutzerverwaltung_ioBroker] @SN_Nr = "' + RFID + '", @Anlage = "' + id_Anlage + '"'
+
+var ssql = 'exec [Anlagen_Produktdaten].[dbo].[Allgemein_Benutzerverwaltung_ioBroker] @SN_Nr = "' + RFID + '", @Anlage = "2600_Schrauberstand"'
 sql.connect(config).then(() => {
     return sql.query (ssql)
 }).then(result => {
+
 		try{
 		adapter.setState("RFID",JSON.stringify(result.recordsets[0][0].SN_Nr), true);
                 adapter.setState("RFID_Name",JSON.stringify(result.recordsets[0][0].Benutzername),true);
@@ -230,8 +239,8 @@ sql.connect(config).then(() => {
                     adapter.log.debug('Abgemeldet');
                     Anmeldedaten("Abgemeldet");
 		    sql.close();
-                }}
-   );
+                }
+});
 
 }
 
