@@ -78,7 +78,19 @@ adapter.setObjectNotExists("RFID_Status", {
 	});
 
 
+adapter.setObjectNotExists("Anlagen_Name", {
+        type: "state",
+        common: {
+        read: true, 
+        write: false, 
+        name: "Anlagen_Name", 
+        type: "string", 
+        role: "Benutzeranmeldung",
+        },
+        native: {}
+        });
 
+adapter.setState("Anlagen_Name",id_Anlage,true);
 
 
 
@@ -209,9 +221,9 @@ function decimalToHex(d, padding) {
 function NNRFID (){
 //Daten vom SQL server lesen
 adapter.log.debug(RFID)
-//var ssql = 'exec [Anlagen_Produktdaten].[dbo].[Allgemein_Benutzerverwaltung_ioBroker] @SN_Nr = "' + RFID + '", @Anlage = "' + id_Anlage + '"'
+var ssql = 'exec [Anlagen_Produktdaten].[dbo].[Allgemein_Benutzerverwaltung_ioBroker] @SN_Nr = "' + RFID + '", @Anlage = "' + id_Anlage + '"'
 
-var ssql = 'exec [Anlagen_Produktdaten].[dbo].[Allgemein_Benutzerverwaltung_ioBroker] @SN_Nr = "' + RFID + '", @Anlage = "2600_Schrauberstand"'
+//var ssql = 'exec [Anlagen_Produktdaten].[dbo].[Allgemein_Benutzerverwaltung_ioBroker] @SN_Nr = "' + RFID + '", @Anlage = "2600_Schrauberstand"'
 sql.connect(config).then(() => {
     return sql.query (ssql)
 }).then(result => {
