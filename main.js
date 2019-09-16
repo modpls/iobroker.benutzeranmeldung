@@ -90,14 +90,14 @@ adapter.setObjectNotExists("Anlagen_Name", {
         native: {}
         });
 
-adapter.setState("Anlagen_Name",id_Anlage,true);
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 adapter.on('ready', function(){
 adapter.log.debug(Hostname)
+
+adapter.setState("Anlagen_Name",id_Anlage,true);
 main();
 });
 
