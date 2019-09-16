@@ -97,6 +97,9 @@ adapter.setObjectNotExists("Anlagen_Name", {
 adapter.on('ready', function(){
 adapter.log.debug(Hostname)
 
+id_Anlage = id_Anlage.replace('"','')
+id_Anlage = id_Anlage.replace('"','')
+
 adapter.setState("Anlagen_Name",id_Anlage,true);
 main();
 });
@@ -183,6 +186,7 @@ function main() {
 scanner.on("data", function(data) {
 	adapter.setState("RFID", decimalToHex(data), true); 
 	RFID = decimalToHex(data)
+	adapter.log.debug("Aufruf: " + id_Anlage)
 	NNRFID();
 });
 
@@ -221,6 +225,7 @@ function decimalToHex(d, padding) {
 function NNRFID (){
 //Daten vom SQL server lesen
 adapter.log.debug(RFID)
+adapter.log.debug(id_Anlage)
 var ssql = 'exec [Anlagen_Produktdaten].[dbo].[Allgemein_Benutzerverwaltung_ioBroker] @SN_Nr = "' + RFID + '", @Anlage = "' + id_Anlage + '"'
 
 //var ssql = 'exec [Anlagen_Produktdaten].[dbo].[Allgemein_Benutzerverwaltung_ioBroker] @SN_Nr = "' + RFID + '", @Anlage = "2600_Schrauberstand"'
