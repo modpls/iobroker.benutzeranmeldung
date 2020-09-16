@@ -28,7 +28,7 @@ const config = {
 
 
 // States anlegen
-adapter.setObjectNotExists("RFID", {
+adapter.setObjectNotExists("0_userdata.0.Benutzer.RFID", {
 	type: "state",
 	common: {
 	name: "RFID",
@@ -42,7 +42,7 @@ adapter.setObjectNotExists("RFID", {
 
 
 
-adapter.setObjectNotExists("RFID_Level", {
+adapter.setObjectNotExists("0_userdata.0.Benutzer.RFID_Level", {
 	type: "state",
 	common: {
 	read: true, 
@@ -53,7 +53,7 @@ adapter.setObjectNotExists("RFID_Level", {
 	native: {}
 	});
 
-adapter.setObjectNotExists("RFID_Name", {
+adapter.setObjectNotExists("0_userdata.0.Benutzer.RFID_Name", {
  	type: "state",
         common: {
  	read: true, 
@@ -65,7 +65,7 @@ adapter.setObjectNotExists("RFID_Name", {
         native: {}
 	});
 
-adapter.setObjectNotExists("RFID_Status", {
+adapter.setObjectNotExists("0_userdata.0.Benutzer.RFID_Status", {
  	type: "state",
         common: {
   	read: true, 
@@ -78,7 +78,7 @@ adapter.setObjectNotExists("RFID_Status", {
 	});
 
 
-adapter.setObjectNotExists("Anlagen_Name", {
+adapter.setObjectNotExists("0_userdata.0.Benutzer.Anlagen_Name", {
         type: "state",
         common: {
         read: true, 
@@ -100,7 +100,7 @@ adapter.log.debug(Hostname)
 id_Anlage = id_Anlage.replace('"','')
 id_Anlage = id_Anlage.replace('"','')
 
-adapter.setState("Anlagen_Name",id_Anlage,true);
+adapter.setState("0_userdata.0.Benutzer.Anlagen_Name",id_Anlage,true);
 main();
 });
 
@@ -128,10 +128,10 @@ process.on('SIGINT', function () {
 
 function finish(callback) {
 
-adapter.setState("RFID","", true);
-adapter.setState("RFID_Name","",true);
-adapter.setState("RFID_Level",0, true);
-adapter.setState("RFID_Status","Abgemeldet", true);
+adapter.setState("0_userdata.0.Benutzer.RFID","", true);
+adapter.setState("0_userdata.0.Benutzer.RFID_Name","",true);
+adapter.setState("0_userdata.0.Benutzer.RFID_Level",0, true);
+adapter.setState("0_userdata.0.Benutzer.RFID_Status","Abgemeldet", true);
 
 try{
 sql.close();
@@ -184,7 +184,7 @@ function main() {
     }
 
 scanner.on("data", function(data) {
-	adapter.setState("RFID", decimalToHex(data), true); 
+	adapter.setState("0_userdata.0.Benutzer.RFID", decimalToHex(data), true); 
 	RFID = decimalToHex(data)
 	adapter.log.debug("Aufruf: " + id_Anlage)
 	NNRFID();
@@ -234,14 +234,14 @@ sql.connect(config).then(() => {
 }).then(result => {
 
 		try{
-		adapter.setState("RFID",JSON.stringify(result.recordsets[0][0].SN_Nr), true);
-                adapter.setState("RFID_Name",JSON.stringify(result.recordsets[0][0].Benutzername),true);
-                adapter.setState("RFID_Level",JSON.stringify(result.recordsets[0][0].Anlage), true);
-		adapter.log.debug("Level:  " + JSON.stringify(result.recordsets[0][0].Anlage))
+		adapter.setState("0_userdata.0.Benutzer.RFID",JSON.stringify(result.recordsets[0][0].SN_Nr), true);
+                adapter.setState("0_userdata.0.Benutzer.RFID_Name",JSON.stringify(result.recordsets[0][0].Benutzername),true);
+                adapter.setState("0_userdata.0.Benutzer.RFID_Level",JSON.stringify(result.recordsets[0][0].Anlage), true);
+		adapter.log.debug("0_userdata.0.Benutzer.Level:  " + JSON.stringify(result.recordsets[0][0].Anlage))
 //Level größer 0 dann anmelden setzen
                 if (Number(JSON.stringify(result.recordsets[0][0].Anlage)) > 0)  {
                     adapter.log.debug('Angemeldet');
-                    adapter.setState("RFID_Status",angemeldet);
+                    adapter.setState("0_userdata.0.Benutzer.RFID_Status",angemeldet);
                     Anmeldedaten("Angemeldet");
 		    sql.close();
 //Level =0 dann Benutzer abmelden
@@ -268,10 +268,10 @@ var a = s.toString();
 var delayMillis = 1000; //1 second
 setTimeout(function() {
 	setTimeout(function() {
-    		adapter.setState("RFID","0");
-    		adapter.setState("RFID_Name",'');
-    		adapter.setState("RFID_Level",0);
-    		adapter.setState("RFID_Status","Abgemeldet");
+    		adapter.setState("0_userdata.0.Benutzer.RFID","0");
+    		adapter.setState("0_userdata.0.Benutzer.RFID_Name",'');
+    		adapter.setState("0_userdata.0.Benutzer.RFID_Level",0);
+    		adapter.setState("0_userdata.0.Benutzer.RFID_Status","Abgemeldet");
  	},1000*60*10);
  
 //	ssql =  "INSERT INTO [Anlagen_Produktdaten].[dbo].[_Benutzeranmeldung] ([SN_Nr],[Benutzername],[Anlage],[Status],[Level]) VALUES ('" + adapter.getState("RFID").val + "','" + adapter.getState("RFID_Name").val + "', '" + Hostname + "', '" + a + "', '" + adapter.getState("RFID_Level").val + "')";
@@ -282,10 +282,10 @@ setTimeout(function() {
 
 	if (a=='Abgemeldet') {
     		setTimeout(function() {
-    			adapter.setState("RFID","0");
-			adapter.setState("RFID_Name",'');
-    			adapter.setState("RFID_Level",0);
-    			adapter.setState("RFID_Status","Abgemeldet");
+    			adapter.setState("0_userdata.0.Benutzer.RFID","0");
+			adapter.setState("0_userdata.0.Benutzer.RFID_Name",'');
+    			adapter.setState("0_userdata.0.Benutzer.RFID_Level",0);
+    			adapter.setState("0_userdata.0.Benutzer.RFID_Status","Abgemeldet");
     		}, delayMillis);
 	};
 
